@@ -206,7 +206,7 @@ len(train_adjusted)
 
 
 
-# Evaluate without clustered data
+# Evaluate without prefilling ratings for new users with clustered data
 
 
 ```
@@ -232,7 +232,7 @@ print(rec_score_unclusted)
     3.649750743827708
 
 
-# Evaluate model with clustered data
+# Evaluate model, prefilling ratings for new users with clustered data
 
 Look at 5% of most highly predicted movies for each user.
 Return the average actual rating of those movies.
