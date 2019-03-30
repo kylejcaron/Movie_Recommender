@@ -1,132 +1,29 @@
+# Movie Recommender Case Study
+
+The goal of this case study is to build a successful Movie Recommender Systems using Spark's Alternating Least Squares Model and the MovieLens dataset, which includes movie, user, and ratings data. Reccomender System's are traditionally difficult to evaluate. For each user, predicted ratings are generated, and the movies with the highest 5% of those ratings are recommended. The evaluation metric is the mean true ratings of the recommendations generated.
 
 
-```python
-from sklearn.cluster import KMeans
-import os
-os.chdir('..')
-from src.util import *
-from src.recommender import MovieRecommender
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
-import seaborn as sns
-from mpl_toolkits.mplot3d import Axes3D
-from sklearn.metrics import silhouette_score
-from sklearn.preprocessing import StandardScaler
-```
+# The Cold Start
+Movie Recommender Systems traditionally suffer from what is known as a cold start. New users and new movies are constantly added to movie platforms such as Netflix, and the Alternating Least Squares model is not equipped to make predictions for movies or users with no pre-existing data. In this case, there are more missing users than there are movies, so users will be clustered by demographic data to mitigate the cold start. 
 
 
-```python
-os.getcwd()
-```
-
-
-
-
-    '/Users/kylecaron/Desktop/movie_recommender'
-
-
-
-
-```python
-users = pd.read_csv('data/users.dat', sep='::', header=None)
-users.columns = ['UserID','Gender','Age','Occupation','Zip']
-#clean
-users.Zip = users.Zip.str.slice(0,5)
-#users.Zip = users.Zip.str.slice(0,1)
-users.Gender = users.Gender.map({'F':0, 'M':1})
-users.Zip = users.Zip.astype('int64')
-```
-
-    /Users/kylecaron/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:1: ParserWarning: Falling back to the 'python' engine because the 'c' engine does not support regex separators (separators > 1 char and different from '\s+' are interpreted as regex); you can avoid this warning by specifying engine='python'.
-      """Entry point for launching an IPython kernel.
-
-
-# Scatter Plot 3D
-
-
-```python
-estimators = [('8 clusters', KMeans(n_clusters=8)),
-              ('6 clusters', KMeans(n_clusters=6)),
-              ('5 clusters', KMeans(n_clusters=5)),
-              ('4 clusters', KMeans(n_clusters=4)),
-              ('3 clusters', KMeans(n_clusters=3)),
-              ('2 clusters', KMeans(n_clusters=2))]
-
-X = users.values
-X = X[:,1:]
-```
-
-# Scale X Data
-
-
-```python
-scaler = StandardScaler()
-scaler.fit(X)
-X = scaler.transform(X)
-```
-
-    /Users/kylecaron/anaconda3/lib/python3.6/site-packages/sklearn/utils/validation.py:595: DataConversionWarning: Data with input dtype int64 was converted to float64 by StandardScaler.
-      warnings.warn(msg, DataConversionWarning)
-    /Users/kylecaron/anaconda3/lib/python3.6/site-packages/sklearn/utils/validation.py:595: DataConversionWarning: Data with input dtype int64 was converted to float64 by StandardScaler.
-      warnings.warn(msg, DataConversionWarning)
-
-
-
-```python
-fignum = 1
-for name, est in estimators:
-    fig = plt.figure(fignum, figsize=(4, 3))
-    ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
-    est.fit(X)
-    labels = est.labels_
-
-    ax.scatter(X[:, 0], X[:, 2], X[:, 3],
-               c=labels.astype(np.float), edgecolor='k')
-
-    ax.w_xaxis.set_ticklabels([])
-    ax.w_yaxis.set_ticklabels([])
-    ax.w_zaxis.set_ticklabels([])
-    ax.set_xlabel('Gender')
-    ax.set_ylabel('Age')
-    ax.set_zlabel('Occupation')
-    ax.set_title(name)
-    ax.dist = 12
-    fignum = fignum + 1
-
-fig.show()
-```
-
-    /Users/kylecaron/anaconda3/lib/python3.6/site-packages/matplotlib/figure.py:445: UserWarning: Matplotlib is currently using module://ipykernel.pylab.backend_inline, which is a non-GUI backend, so cannot show the figure.
-      % get_backend())
-
-
+# KMeans Clustering
+User demographic data included User ID, Gender, Age, Occupation, and Zip Code. Features were normalized, and all were included in the final clustering
 
 ![png](readme_files/cluster_users_7_1.png)
 
-
-
 ![png](readme_files/cluster_users_7_2.png)
-
-
 
 ![png](readme_files/cluster_users_7_3.png)
 
-
-
 ![png](readme_files/cluster_users_7_4.png)
 
-
-
 ![png](readme_files/cluster_users_7_5.png)
-
-
 
 ![png](readme_files/cluster_users_7_6.png)
 
 
-# Evaluate Num K
+### Evaluate Num K
 
 
 ```python
@@ -138,13 +35,7 @@ for i in range(30):
 plt.plot(number_k)
 ```
 
-
-
-
-    [<matplotlib.lines.Line2D at 0x12db289b0>]
-
-
-
+The plot below shows the Sum of Squared Error as K increases
 
 ![png](readme_files/cluster_users_9_1.png)
 
@@ -161,43 +52,22 @@ sil = np.array(sil)
 plt.plot(sil[:,0], sil[:,1])
 ```
 
-
-
-
-    [<matplotlib.lines.Line2D at 0x12cb7b3c8>]
-
-
-
+The plot below shows the Silhouette Score as K increases. The silhouette score measures how similar an object is to its assigned cluster, compared to the other clusters.
 
 ![png](readme_files/cluster_users_10_1.png)
 
+As you can see form the silhouette score plot, 5 is the ideal number of clusters.
 
-As you can see form the silhouette score plot, 5 is the ideal number of clusters
-
-# KMeans with K = 5 to predict groups
-
+### KMeans with K = 5 to predict groups
 
 ```python
 kmeans = KMeans(5).fit(X)
 labels = kmeans.labels_
 ```
 
-
-```python
-user_groups = pd.DataFrame(labels,users.UserID.unique()).reset_index()
-user_groups.columns = ['user', 'cluster']
-```
-
-
-```python
-user_groups.to_csv('data/clustered_users.csv')
-```
-
-
 ```python
 user_groups.head()
 ```
-
 
 
 
@@ -254,75 +124,11 @@ user_groups.head()
 </div>
 
 
-# Recommender Case Study
 
-**Imports and configuration**
-
-
-```
-import os
-os.getcwd()
-```
+# Fitting the Model
 
 
-
-
-    '/Users/kylecaron/Desktop/movie_recommender/notebooks'
-
-
-
-
-```
-import os
-os.chdir('..')
-from src.util import *
-from src.recommender import *
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
-import seaborn as sns
-```
-
-### Generate random sample and save train-test .csv files
-
-
-```
-os.getcwd()
-```
-
-
-
-
-    '/Users/kylecaron/Desktop/movie_recommender'
-
-
-
-
-```
-#generate_file_split(pd.read_csv('data/training.csv'),1)
-```
-
-
-```
-# request_data = train_data.copy()
-# request_data.drop('rating', axis=1, inplace=True)
-# test_data = train_data.copy()
-```
-
-
-```
-generate_file_split(random_subset(800000), 0.8)
-```
-
-
-```
-train_data = pd.read_csv('data/ctrain.csv')
-test_data = pd.read_csv('data/ctest.csv')
-request_data = pd.read_csv('data/crequests.csv')
-```
-
-# Import KMeans Clustered User Groups and make recommendations by group instead of by user
+# Import KMeans Clustered User Groups and make recommendations by Cluster instead of by user
 
 
 ```
