@@ -220,7 +220,7 @@ fit_model = reco_instance.fit(train_data)
 ```
 predictions_unclustered = reco_instance.transform(test_data, cluster=False)
 rec_evaluator_unclustered = RecoRegressionEvaluation(
-    labelCol="actualrating", predictionCol="rating")
+    labelCol="actualrating", predictionCol="predicted_rating")
 
 rec_score_unclusted = rec_evaluator_unclustered.evaluate(
     predictions_unclustered)
@@ -251,14 +251,14 @@ predictions = reco_instance.transform(test_data)
 
 ```
 rec_evaluator = RecoRegressionEvaluation(labelCol="actualrating",
-                                       predictionCol="rating")
+                                       predictionCol="predicted_rating")
 
 rec_score = rec_evaluator.evaluate(predictions)
 
 print(rec_score)
 ```
 
-    evaluate based on: actualrating, rating
+    evaluate based on: actualrating, predicted_rating
     4.292578849721707
 
 
