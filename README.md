@@ -697,7 +697,6 @@ rec_score_unclusted = rec_evaluator_unclustered.evaluate(
 print(rec_score_unclusted)
 ```
 
-    evaluate based on: actualrating, rating
     3.649750743827708
 
 
@@ -727,7 +726,6 @@ rec_score = rec_evaluator.evaluate(predictions)
 print(rec_score)
 ```
 
-    evaluate based on: actualrating, rating
     4.292578849721707
 
 
