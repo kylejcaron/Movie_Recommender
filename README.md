@@ -1,4 +1,4 @@
-
+# Cluster User Demographic Data
 
 ```python
 users = pd.read_csv('data/users.dat', sep='::', header=None)
@@ -27,25 +27,11 @@ users.drop('Occupation', axis=1, inplace=True)
 
 
 
+
 ```python
 users.head()
 ```
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -248,7 +234,7 @@ plt.plot(pca.explained_variance_ratio_)
 
 
 
-![png](cluster_users_files/cluster_users_8_1.png)
+![png](readme_files/cluster_users_8_1.png)
 
 
 
@@ -295,32 +281,29 @@ for name, est in estimators:
 fig.show()
 ```
 
-    /Users/kylecaron/anaconda3/lib/python3.6/site-packages/matplotlib/figure.py:445: UserWarning: Matplotlib is currently using module://ipykernel.pylab.backend_inline, which is a non-GUI backend, so cannot show the figure.
-      % get_backend())
+
+
+![png](readme_files/_users_11_1.png)
 
 
 
-![png](cluster_users_files/cluster_users_11_1.png)
+![png](readme_files/cluster_users_11_2.png)
 
 
 
-![png](cluster_users_files/cluster_users_11_2.png)
+![png](readme_files/cluster_users_11_3.png)
 
 
 
-![png](cluster_users_files/cluster_users_11_3.png)
+![png](readme_files/cluster_users_11_4.png)
 
 
 
-![png](cluster_users_files/cluster_users_11_4.png)
+![png](readme_files/cluster_users_11_5.png)
 
 
 
-![png](cluster_users_files/cluster_users_11_5.png)
-
-
-
-![png](cluster_users_files/cluster_users_11_6.png)
+![png](readme_files/cluster_users_11_6.png)
 
 
 # Evaluate Num K
@@ -343,7 +326,7 @@ plt.plot(number_k)
 
 
 
-![png](cluster_users_files/cluster_users_13_1.png)
+![png](readme_files/cluster_users_13_1.png)
 
 
 
@@ -366,7 +349,7 @@ plt.plot(sil[:,0], sil[:,1])
 
 
 
-![png](cluster_users_files/cluster_users_14_1.png)
+![png](readme_files/cluster_users_14_1.png)
 
 
 # KMeans with K = 4 to predict groups
@@ -397,19 +380,6 @@ user_groups.head()
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
